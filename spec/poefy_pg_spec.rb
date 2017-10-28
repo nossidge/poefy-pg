@@ -119,26 +119,31 @@ describe Poefy::Poem, "-- Postgres" do
 
     describe ":rhyme option" do
 
-      describe "should return nil" do
+      describe "should raise Poefy::MissingFormOrRhyme" do
         it "blank, no argument" do
-          poem = @poefy.poem
-          expect(poem).to be_nil
+          expect {
+            @poefy.poem
+          }.to raise_error(Poefy::MissingFormOrRhyme)
         end
         it "({  })" do
-          poem = @poefy.poem ({  })
-          expect(poem).to be_nil
+          expect {
+            @poefy.poem ({  })
+          }.to raise_error(Poefy::MissingFormOrRhyme)
         end
         it "({ rhyme: nil })" do
-          poem = @poefy.poem ({ rhyme: nil })
-          expect(poem).to be_nil
+          expect {
+            @poefy.poem ({ rhyme: nil })
+          }.to raise_error(Poefy::MissingFormOrRhyme)
         end
         it "({ rhyme: ' ' })" do
-          poem = @poefy.poem ({ rhyme: ' ' })
-          expect(poem).to be_nil
+          expect {
+            @poefy.poem ({ rhyme: ' ' })
+          }.to raise_error(Poefy::MissingFormOrRhyme)
         end
         it "({ rhyme: '' })" do
-          poem = @poefy.poem ({ rhyme: '' })
-          expect(poem).to be_nil
+          expect {
+            @poefy.poem ({ rhyme: '' })
+          }.to raise_error(Poefy::MissingFormOrRhyme)
         end
       end
 
@@ -165,23 +170,25 @@ describe Poefy::Poem, "-- Postgres" do
         end
       end
 
-      describe "should be nil if can't parse rhyme string" do
+      describe "should raise error if can't parse rhyme string" do
         rhymes = %w{a1 b1 ab1 Ab1 AAAAABb1 1 1111 1122 11221 ;;::1. }
         rhymes += ['AA Bb1','11 11','11 1 1','..1.']
         rhymes.each do |i|
           it "({ rhyme: '#{i}' })" do
-            poem = @poefy.poem ({ rhyme: i })
-            expect(poem).to be_nil
+            expect {
+              @poefy.poem ({ rhyme: i })
+            }.to raise_error(Poefy::RhymeError)
           end
         end
       end
 
-      describe "should be nil if can't complete rhyme string" do
+      describe "should raise error if can't complete rhyme string" do
         rhymes = %w{aaaaaa abcd aaaaabbbbb}
         rhymes.each do |i|
           it "({ rhyme: '#{i}' })" do
-            poem = @poefy.poem ({ rhyme: i })
-            expect(poem).to be_nil
+            expect {
+              @poefy.poem ({ rhyme: i })
+            }.to raise_error(Poefy::NotEnoughData)
           end
         end
       end
@@ -201,12 +208,13 @@ describe Poefy::Poem, "-- Postgres" do
         end
       end
 
-      describe "should be nil if can't complete repeating rhyme string" do
+      describe "should raise error if can't complete repeating rhyme string" do
         lines = 200
         it "({ rhyme: ('A'..'D').to_a.map { |i| i * #{lines} }.join })" do
           rhyme = ('A'..'D').to_a.map { |i| i * lines }.join
-          poem = @poefy.poem ({ rhyme: rhyme })
-          expect(poem).to be_nil
+          expect {
+            @poefy.poem ({ rhyme: rhyme })
+          }.to raise_error(Poefy::NotEnoughData)
         end
       end
 
@@ -221,29 +229,34 @@ describe Poefy::Poem, "-- Postgres" do
         end
       end
 
-      describe "should be nil if given a named form it can't fulfil" do
+      describe "should raise error if given a named form it can't fulfil" do
         it "({ form: 'sonnet' })" do
-          poem = @poefy.poem ({ form: 'sonnet' })
-          expect(poem).to be_nil
+          expect {
+            @poefy.poem ({ form: 'sonnet' })
+          }.to raise_error(Poefy::NotEnoughData)
         end
         it "({ form: :villanelle })" do
-          poem = @poefy.poem ({ form: :villanelle })
-          expect(poem).to be_nil
+          expect {
+            @poefy.poem ({ form: 'villanelle' })
+          }.to raise_error(Poefy::NotEnoughData)
         end
       end
 
-      describe "should be nil if given a junk named form" do
+      describe "should raise error if given a junk named form" do
         it "({ form: 'sonnet_junk' })" do
-          poem = @poefy.poem ({ form: 'sonnet_junk' })
-          expect(poem).to be_nil
+          expect {
+            @poefy.poem ({ form: 'sonnet_junk' })
+          }.to raise_error(Poefy::MissingFormOrRhyme)
         end
         it "({ form: :not_a_form })" do
-          poem = @poefy.poem ({ form: :not_a_form })
-          expect(poem).to be_nil
+          expect {
+            @poefy.poem ({ form: :not_a_form })
+          }.to raise_error(Poefy::MissingFormOrRhyme)
         end
         it "({ form: :not_a_form, indent: '0010' })" do
-          poem = @poefy.poem ({ form: :not_a_form, indent: '0010' })
-          expect(poem).to be_nil
+          expect {
+            @poefy.poem ({ form: :not_a_form, indent: '0010' })
+          }.to raise_error(Poefy::MissingFormOrRhyme)
         end
       end
 
@@ -306,11 +319,12 @@ describe Poefy::Poem, "-- Postgres" do
           expect(poem.count).to be 14
         end
       end
-      describe "should fail to be created" do
+      describe "should raise Poefy::NotEnoughData" do
         it "({ form: :sonnet, acrostic: 'qqqqqqqqqqqqqq' })" do
-          poem = @poefy.poem ({ form: :sonnet,
-                                acrostic: 'qqqqqqqqqqqqqq' })
-          expect(poem).to be_nil
+          expect {
+            @poefy.poem ({ form: :sonnet,
+                           acrostic: 'qqqqqqqqqqqqqq' })
+          }.to raise_error(Poefy::NotEnoughData)
         end
       end
     end
@@ -334,12 +348,13 @@ describe Poefy::Poem, "-- Postgres" do
         end
       end
 
-      describe "should fail to be created" do
+      describe "should raise Poefy::NotEnoughData" do
         forms_fail.each do |form|
           it "({ form: #{form} })" do
             4.times do
-              poem = @poefy.poem ({ form: form })
-              expect(poem).to be_nil
+              expect {
+                @poefy.poem ({ form: form })
+              }.to raise_error(Poefy::NotEnoughData)
             end
           end
         end
