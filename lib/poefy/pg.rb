@@ -15,22 +15,25 @@ module Poefy
 
   class Database
 
-    # Open a connection, execute a query, close the connection.
+    # Details for the database connection.
+    def self.connection
+      PG.connect(
+        :dbname   => 'poefy',
+        :user     => 'poefy',
+        :password => 'poefy'
+      )
+    end
+
+    # Open a class-wide connection, execute a query.
     def self.single_exec! sql, sql_args = nil
       output = nil
       begin
-        con = PG.connect(
-          :dbname   => 'poefy',
-          :user     => 'poefy',
-          :password => 'poefy'
-        )
+        @@con ||= Database::connection
         output = if sql_args
-          con.exec(sql, [*sql_args]).values
+          @@con.exec(sql, [*sql_args]).values
         else
-          con.exec(sql).values
+          @@con.exec(sql).values
         end
-      ensure
-        con.close if con
       end
       output
     end
@@ -137,11 +140,7 @@ module Poefy
 
       # Open a connection to the database.
       def open_connection
-        @db ||= PG.connect(
-          :dbname   => 'poefy',
-          :user     => 'poefy',
-          :password => 'poefy'
-        )
+        @db ||= Database::connection
       end
 
       # Execute a query.
