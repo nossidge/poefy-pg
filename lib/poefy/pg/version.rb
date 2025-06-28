@@ -8,7 +8,7 @@ module Poefy
     def self.version_number
       major = 2
       minor = 0
-      tiny  = 1
+      tiny  = 2
       pre   = nil
 
       string = [major, minor, tiny, pre].compact.join('.')
