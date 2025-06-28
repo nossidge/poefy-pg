@@ -6,8 +6,8 @@ module Poefy
   module Pg
 
     def self.version_number
-      major = 1
-      minor = 1
+      major = 2
+      minor = 0
       tiny  = 0
       pre   = nil
 
@@ -16,7 +16,7 @@ module Poefy
     end
 
     def self.version_date
-      '2017-10-31'
+      '2025-06-28'
     end
 
   end
