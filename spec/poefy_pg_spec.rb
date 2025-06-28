@@ -53,7 +53,7 @@ describe Poefy::Poem, "-- Postgres" do
 
       it "Use array of strings" do
         @poefy.make_database! text_array
-        expect(@poefy.corpus.exists?).to be true
+        expect(@poefy.corpus.exist?).to be true
         expect(@poefy.corpus.count).to be row_count
         poem = @poefy.poem({ rhyme: 'aabb' })
         expect(poem.count).to be 4
@@ -61,7 +61,7 @@ describe Poefy::Poem, "-- Postgres" do
 
       it "Use one long newline delimited string" do
         @poefy.make_database! text_string
-        expect(@poefy.corpus.exists?).to be true
+        expect(@poefy.corpus.exist?).to be true
         expect(@poefy.corpus.count).to be row_count
         poem = @poefy.poem({ rhyme: 'aabb' })
         expect(poem.count).to be 4
@@ -76,7 +76,7 @@ describe Poefy::Poem, "-- Postgres" do
         tmp.close
 
         @poefy.make_database! text_path
-        expect(@poefy.corpus.exists?).to be true
+        expect(@poefy.corpus.exist?).to be true
         expect(@poefy.corpus.count).to be row_count
         poem = @poefy.poem({ rhyme: 'aabb' })
         expect(poem.count).to be 4
@@ -307,7 +307,7 @@ describe Poefy::Poem, "-- Postgres" do
       it "should make the database '#{@root}/data/#{file_db}" do
         input = `sed '/[a-z]/!d' #{@root}/data/#{file_txt}`
         @poefy.make_database! input
-        expect(@poefy.corpus.exists?).to be true
+        expect(@poefy.corpus.exist?).to be true
       end
     end
 
@@ -411,7 +411,7 @@ describe Poefy::Poem, "-- Postgres" do
       it "should make the database '#{@root}/data/#{file_db}" do
         input = `sed '/[a-z]/!d' #{@root}/data/#{file_txt}`
         @poefy.make_database! input
-        expect(@poefy.corpus.exists?).to be true
+        expect(@poefy.corpus.exist?).to be true
       end
     end
 

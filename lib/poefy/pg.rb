@@ -91,14 +91,14 @@ module Poefy
 
     # The number of lines in the table.
     def count
-      return 0 if not exists?
+      return 0 unless exist?
       sql = "SELECT COUNT(*) AS num FROM #{table};"
       execute!(sql).first['num'].to_i
     end
 
     # See if the table exists or not.
     # Attempt to access table, and return false on error.
-    def exists?
+    def exist?
       open_connection
       @db.exec("SELECT $1::regclass", [*table])
       true
